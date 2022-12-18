@@ -16,44 +16,44 @@ import kotlin.concurrent.fixedRateTimer
 
 
 class Monitor {
+
+
     companion object {
+
+        @JvmStatic
+        val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
         @JvmStatic
         fun main(args: Array<String>) {
-
-            val nets: Enumeration<NetworkInterface> = NetworkInterface.getNetworkInterfaces()
-
-            for (nif in Collections.list(nets)) {
-                //do something with the network interface
-                println("NIF is ${nif.displayName} ${nif.index}  ${nif.hardwareAddress}  ${nif.inetAddresses.toList()}  ${nif.interfaceAddresses} ${nif.isUp} ")
+            val formattedTime: String = timeFormatter.format(LocalDateTime.now())
+            val pingFile = File("$formattedTime pingFile.log")
+            if (!pingFile.exists()) {
+                pingFile.createNewFile()
+            } else {
+//                pingFile.delete()
             }
-
-
-//            val pingFile = File("pingFile.log")
-//            if (!pingFile.exists()) {
-//                pingFile.createNewFile()
-//            } else {
-////                pingFile.delete()
-//            }
-//            val downloadFile = File("downloadFile.log")
-//            if (!downloadFile.exists()) {
-//                downloadFile.createNewFile()
-//            } else {
-////                downloadFile.delete()
-//            }
-//            create10SecondTimer(pingFile)
-//            createDownloadTimer(downloadFile)
-//            while (true) {
-//                Thread.sleep(200_000)
-//            }
+            val downloadFile = File("$formattedTime downloadFile.log")
+            if (!downloadFile.exists()) {
+                downloadFile.createNewFile()
+            } else {
+//                downloadFile.delete()
+            }
+            create10SecondTimer(pingFile)
+            createDownloadTimer(downloadFile)
+            while (true) {
+                Thread.sleep(2_000)
+            }
         }
 
+
         private fun createDownloadTimer(logFile: File) {
-            val fixedRateTimer = fixedRateTimer(
+            fixedRateTimer(
                 name = "download-timer",
-                initialDelay = 0,
-                period = 60_000
+                initialDelay = 3_000,
+                period = 60_000,
+                daemon = true
             ) {
-                println("Download file")
+                println("Download file ${timeFormatter.format(LocalDateTime.now())}")
                 downloadFile(
                     "http://www.nurflugel.com/Home/pictures/2000-09-06_GemStone_Brokat_Party/partypics.zip",
                     "partypics.zip",
@@ -63,31 +63,44 @@ class Monitor {
         }
 
         private fun create10SecondTimer(logFile: File) {
-            val fixedRateTimer = fixedRateTimer(
+            fixedRateTimer(
                 name = "ping-timer",
                 initialDelay = 0,
-                period = 10_000
+                period = 10_000,
+                daemon = true
             ) {
-                println("ping!")
-                downloadFile("https://www.nurflugel.com/clearpixel.gif",
+                println("ping! ${timeFormatter.format(LocalDateTime.now())}")
+                downloadFile(
+                    "https://www.nurflugel.com/clearpixel.gif",
                     "clearpixel.gif",
-                    logFile)
+                    logFile
+                )
             }
         }
 
         private fun downloadFile(url: String, outputFileName: String, logFile: File) {
-            val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
-            val numberFormat: NumberFormat = NumberFormat.getNumberInstance(Locale.US)
-            val start = Instant.now()
-            // ping doesn't seem to work, so download a very small, light file
-            downloadFile(URL(url), outputFileName)
-            val duration = Duration.between(start, Instant.now())
-            val file = File(outputFileName)
-            val size: Long = Files.size(file.toPath())
-            val durationMillis: Long = duration.toMillis()
-            logFile.appendText("${LocalDateTime.now().format(formatter)}\t${numberFormat.format(durationMillis)}\t${numberFormat.format(size*1000/durationMillis)} bytes/sec for ${numberFormat.format(size)} bytes\n")
+            try {
+                val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+                val numberFormat: NumberFormat = NumberFormat.getNumberInstance(Locale.US)
+                val start = Instant.now()
+                // ping doesn't seem to work, so download a very small, light file
+                downloadFile(URL(url), outputFileName)
+                val duration = Duration.between(start, Instant.now())
+                val file = File(outputFileName)
+                val size: Long = Files.size(file.toPath())
+                val durationMillis: Long = duration.toMillis()
+                logFile.appendText(
+                    "${
+                        LocalDateTime.now().format(formatter)
+                    }\t${numberFormat.format(durationMillis)}\t${
+                        numberFormat.format(size * 1000 / durationMillis)} bytes/sec for ${
+                        numberFormat.format(size)} bytes\n"
+                )
 
-            file.delete()
+                file.delete()
+            } catch (e: Exception) {
+                println("got an unexpected error ${e.message}")
+            }
         }
 
         private fun pingUrl() {
