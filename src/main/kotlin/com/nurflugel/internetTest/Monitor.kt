@@ -2,7 +2,6 @@ package com.nurflugel.internetTest
 
 import java.io.File
 import java.io.FileOutputStream
-import java.net.NetworkInterface
 import java.net.URL
 import java.nio.channels.Channels
 import java.nio.file.Files
@@ -54,8 +53,8 @@ class Monitor {
                 daemon = true
             ) {
                 println("Download file ${timeFormatter.format(LocalDateTime.now())}")
-                downloadFile(
-                    "http://www.nurflugel.com/Home/pictures/2000-09-06_GemStone_Brokat_Party/partypics.zip",
+                performDownload(
+                    "https://www.nurflugel.com/Home/pictures/2000-09-06_GemStone_Brokat_Party/partypics.zip",
                     "partypics.zip",
                     logFile
                 )
@@ -70,7 +69,7 @@ class Monitor {
                 daemon = true
             ) {
                 println("ping! ${timeFormatter.format(LocalDateTime.now())}")
-                downloadFile(
+                performDownload(
                     "https://www.nurflugel.com/clearpixel.gif",
                     "clearpixel.gif",
                     logFile
@@ -78,7 +77,7 @@ class Monitor {
             }
         }
 
-        private fun downloadFile(url: String, outputFileName: String, logFile: File) {
+        private fun performDownload(url: String, outputFileName: String, logFile: File) {
             try {
                 val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
                 val numberFormat: NumberFormat = NumberFormat.getNumberInstance(Locale.US)
@@ -99,7 +98,7 @@ class Monitor {
 
                 file.delete()
             } catch (e: Exception) {
-                println("got an unexpected error ${e.message}")
+                println("got an unexpected error, continuing: ${e.message} \n${e.stackTrace}")
             }
         }
 
@@ -123,7 +122,7 @@ class Monitor {
                     }
                 }
             } catch (e: Exception) {
-                println("Problem downloading file, skipping: ${e.message}")
+                println("Problem downloading file, continuing: ${e.message} \n${e.stackTrace}")
             }
         }
     }

@@ -54,7 +54,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass.set("com.nurflugel.sisyphus.sunbursts.ClockworkWigglerGenerator")
+    mainClass.set("com.nurflugel.internetTest.Monitor")
     group = "com.nurflugel"
     version = "0.0.1-SNAPSHOT"
 }
