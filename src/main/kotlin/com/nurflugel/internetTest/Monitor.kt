@@ -114,12 +114,16 @@ class Monitor {
         }
 
         private fun downloadFile(url: URL, outputFileName: String) {
-            url.openStream().use {
-                Channels.newChannel(it).use { rbc ->
-                    FileOutputStream(outputFileName).use { fos ->
-                        fos.channel.transferFrom(rbc, 0, Long.MAX_VALUE)
+            try {
+                url.openStream().use {
+                    Channels.newChannel(it).use { rbc ->
+                        FileOutputStream(outputFileName).use { fos ->
+                            fos.channel.transferFrom(rbc, 0, Long.MAX_VALUE)
+                        }
                     }
                 }
+            } catch (e: Exception) {
+                println("Problem downloading file, skipping: ${e.message}")
             }
         }
     }
