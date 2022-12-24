@@ -22,6 +22,9 @@ class Monitor {
         @JvmStatic
         val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
+        private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+        private val numberFormat: NumberFormat = NumberFormat.getNumberInstance(Locale.US)
+
         @JvmStatic
         fun main(args: Array<String>) {
             val formattedTime: String = timeFormatter.format(LocalDateTime.now())
@@ -37,10 +40,26 @@ class Monitor {
             } else {
 //                downloadFile.delete()
             }
-            create10SecondTimer(pingFile)
-            createDownloadTimer(downloadFile)
+//            create10SecondTimer(pingFile)
+//            createDownloadTimer(downloadFile)
+            var count = 0
             while (true) {
-                Thread.sleep(2_000)
+                if (count < 10) {
+                    performDownload(
+                        "https://www.nurflugel.com/clearpixel.gif",
+                        "clearpixel.gif",
+                        pingFile
+                    )
+                    count++
+                } else {
+                    performDownload(
+                        "https://www.nurflugel.com/Home/pictures/2000-09-06_GemStone_Brokat_Party/partypics.zip",
+                        "partypics.zip",
+                        downloadFile
+                    )
+                    count = 0
+                }
+                Thread.sleep(10_000)
             }
         }
 
@@ -79,8 +98,7 @@ class Monitor {
 
         private fun performDownload(url: String, outputFileName: String, logFile: File) {
             try {
-                val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
-                val numberFormat: NumberFormat = NumberFormat.getNumberInstance(Locale.US)
+
                 val start = Instant.now()
                 // ping doesn't seem to work, so download a very small, light file
                 downloadFile(URL(url), outputFileName)
@@ -88,12 +106,15 @@ class Monitor {
                 val file = File(outputFileName)
                 val size: Long = Files.size(file.toPath())
                 val durationMillis: Long = duration.toMillis()
+                println("performDownload url = $url  duration=${numberFormat.format(durationMillis)}")
                 logFile.appendText(
                     "${
                         LocalDateTime.now().format(formatter)
                     }\t${numberFormat.format(durationMillis)}\t${
-                        numberFormat.format(size * 1000 / durationMillis)} bytes/sec for ${
-                        numberFormat.format(size)} bytes\n"
+                        numberFormat.format(size * 1000 / durationMillis)
+                    } bytes/sec for ${
+                        numberFormat.format(size)
+                    } bytes\n"
                 )
 
                 file.delete()
@@ -102,15 +123,6 @@ class Monitor {
             }
         }
 
-        private fun pingUrl() {
-            //                val ipAddress = "144.208.71.150"
-            //                val geek = InetAddress.getByName(ipAddress)
-            //                println("Sending Ping Request to $ipAddress")
-            //                if (geek.isReachable(1000))
-            //                    println("Host is reachable")
-            //                else
-            //                    println("Sorry ! We can't reach to this host")
-        }
 
         private fun downloadFile(url: URL, outputFileName: String) {
             try {
