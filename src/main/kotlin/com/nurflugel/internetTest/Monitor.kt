@@ -106,16 +106,12 @@ class Monitor {
                 val file = File(outputFileName)
                 val size: Long = Files.size(file.toPath())
                 val durationMillis: Long = duration.toMillis()
-                println("performDownload url = $url  duration=${numberFormat.format(durationMillis)}")
-                logFile.appendText(
-                    "${
-                        LocalDateTime.now().format(formatter)
-                    }\t${numberFormat.format(durationMillis)}\t${
-                        numberFormat.format(size * 1000 / durationMillis)
-                    } bytes/sec for ${
-                        numberFormat.format(size)
-                    } bytes\n"
-                )
+                val formattedDateTime = LocalDateTime.now().format(formatter)
+                val formattedDuration = numberFormat.format(durationMillis)
+                println("performDownload url = $url  duration=${formattedDuration}")
+                val formattedPerformance = numberFormat.format(size * 1000 / durationMillis)
+                val formattedSize = numberFormat.format(size)
+                logFile.appendText("$formattedDateTime\t$formattedDuration\t$formattedPerformance bytes/sec for $formattedSize bytes\n")
 
                 file.delete()
             } catch (e: Exception) {
