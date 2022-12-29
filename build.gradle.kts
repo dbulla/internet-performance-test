@@ -18,8 +18,8 @@ plugins {
 
     id("com.github.ben-manes.versions") version "0.44.0"
     id("com.dorongold.task-tree") version "2.1.0"
-    kotlin("jvm") version "1.7.21"
-    id("org.springframework.boot") version "2.7.5"
+    kotlin("jvm") version "1.8.0-RC2"
+    id("org.springframework.boot") version "3.0.1"
 }
 
 repositories {

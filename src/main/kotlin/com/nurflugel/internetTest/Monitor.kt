@@ -119,7 +119,7 @@ class Monitor {
 
                 file.delete()
             } catch (e: Exception) {
-                println("got an unexpected error, continuing: ${e.message} \n${e.stackTrace}")
+                println("got an unexpected error, continuing: ${e.message} \n${e.stackTrace.forEach { it.toString() }}")
             }
         }
 
