@@ -18,7 +18,7 @@ plugins {
 
     id("com.github.ben-manes.versions") version "0.44.0"
     id("com.dorongold.task-tree") version "2.1.0"
-    kotlin("jvm") version "1.8.0-RC2"
+    kotlin("jvm") version "1.8.0"
     id("org.springframework.boot") version "3.0.1"
 }
 
@@ -62,14 +62,7 @@ application {
 //tasks.withType<Test> {
 //    useJUnitPlatform()
 //}
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    jvmTarget = "1.8"
-}
-val compileTestKotlin: KotlinCompile by tasks
-compileTestKotlin.kotlinOptions {
-    jvmTarget = "1.8"
-}
+
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
