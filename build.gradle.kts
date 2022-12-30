@@ -63,6 +63,9 @@ application {
 //    useJUnitPlatform()
 //}
 
+kotlin {
+    jvmToolchain(17) // "8"
+}
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
