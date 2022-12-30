@@ -110,9 +110,8 @@ class Monitor {
 //                println("url = $url  duration=${formattedDuration}")
         val formattedPerformance = numberFormat.format(size * 1000 / durationMillis)
         val formattedSize = numberFormat.format(size)
-        val message =
-          "$formattedDateTime\t$formattedDuration\t$formattedPerformance bytes/sec for $formattedSize bytes\n"
-        logFile.appendText(message)
+        val message = "$formattedDateTime\t$formattedDuration\t$formattedPerformance bytes/sec for $formattedSize bytes"
+        logFile.appendText("$message\n")
         println(message)
         file.delete()
       } catch (e: Exception) {
